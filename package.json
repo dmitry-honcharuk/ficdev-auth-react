@@ -24,9 +24,19 @@
   },
   "homepage": "https://github.com/dmitry-honcharuk/auth-package#readme",
   "devDependencies": {
+    "@types/js-cookie": "^2.2.6",
+    "@types/react": "^17.0.3",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",
     "prettier": "^2.2.1",
     "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "js-cookie": "^2.2.1",
+    "query-string": "^7.0.0"
+  },
+  "peerDependencies": {
+    "react": "^17",
+    "react-dom": "^17"
   }
 }
