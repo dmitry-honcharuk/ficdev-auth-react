@@ -7,9 +7,6 @@
   "files": [
     "dist"
   ],
-  "workspaces": [
-    "src/client"
-  ],
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
