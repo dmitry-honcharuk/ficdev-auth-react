@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './context';
 import { User } from './User';
 import { clearTokenCookie, getTokenCookie } from './utils/cookies';

@@ -7,7 +7,7 @@
     "strict": true,
     "rootDir": "src",
     "esModuleInterop": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "lib": ["es2015", "DOM"]
   },
   "include": ["src"],
