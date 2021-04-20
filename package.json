@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dmitry-honcharuk/auth-package.git"
+    "url": "git@github.com:dmitry-honcharuk/ficdev-auth-react.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dmitry-honcharuk/auth-package/issues"
+    "url": "https://github.com/dmitry-honcharuk/ficdev-auth-react/issues"
   },
-  "homepage": "https://github.com/dmitry-honcharuk/auth-package#readme",
+  "homepage": "https://github.com/dmitry-honcharuk/ficdev-auth-react#readme",
   "devDependencies": {
     "@types/js-cookie": "^2.2.6",
     "@types/react": "^17.0.3",
