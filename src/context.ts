@@ -7,6 +7,8 @@ interface Context {
   user: User | null;
   isFulfilled: boolean;
   setUser: (user: User | null) => void;
+  urlBase: string;
+  cookieName: string;
 }
 
 export const AuthContext = createContext<Context>({
@@ -16,4 +18,6 @@ export const AuthContext = createContext<Context>({
   isFulfilled: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setUser: () => {},
+  urlBase: '',
+  cookieName: '',
 });

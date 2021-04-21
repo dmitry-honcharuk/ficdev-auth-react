@@ -1,13 +1,20 @@
 import { stringify } from 'query-string';
-import { AUTH_URL_BASE } from '../constants';
 
-export function getAuthorizePageUrl({ audience, clientId }: { audience: string; clientId: string }): string {
-  return `${AUTH_URL_BASE}/authorize?${stringify({
-    audience,
-    clientId,
-  })}`;
+export function getAuthorizePageUrlFactory({ urlBase }: FactoryOptions) {
+  return ({ audience, clientId }: { audience: string; clientId: string }): string => {
+    return `${urlBase}/authorize?${stringify({
+      audience,
+      clientId,
+    })}`;
+  };
 }
 
-export function getAuthorizeApiUrl({ clientId }: { clientId: string }): string {
-  return `${AUTH_URL_BASE}/api/${clientId}/authorize`;
+export function getAuthorizeApiUrlFactory({ urlBase }: FactoryOptions) {
+  return ({ clientId }: { clientId: string }): string => {
+    return `${urlBase}/api/${clientId}/authorize`;
+  };
+}
+
+interface FactoryOptions {
+  urlBase: string;
 }

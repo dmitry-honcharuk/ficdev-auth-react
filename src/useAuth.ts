@@ -1,11 +1,12 @@
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from './context';
+import { cookieServiceFactory } from './services/cookie';
 import { User } from './User';
-import { clearTokenCookie, setTokenCookie } from './utils/cookies';
-import { getAuthorizePageUrl } from './utils/url';
+import { getAuthorizePageUrlFactory } from './utils/url';
 
 export function useAuth(): AuthHook {
-  const { clientId, audience, user, setUser, isFulfilled } = useContext(AuthContext);
+  const { clientId, audience, user, setUser, isFulfilled, urlBase, cookieName } = useContext(AuthContext);
+
   const authWindowRef = useRef<Window | null>(null);
   const onAuthSuccessRef = useRef<AuthorizeWithRedirect>();
 
@@ -16,8 +17,10 @@ export function useAuth(): AuthHook {
       if (message && authWindowRef.current) {
         const { auth_token, user } = message;
 
+        const cookieService = cookieServiceFactory({ cookieName });
+
         setUser(user);
-        setTokenCookie(auth_token);
+        cookieService.setTokenCookie(auth_token);
         authWindowRef.current.close();
 
         if (onAuthSuccessRef.current) {
@@ -31,7 +34,7 @@ export function useAuth(): AuthHook {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [setUser]);
+  }, [cookieName, setUser]);
 
   const authorizeWithRedirect = useCallback<AuthorizeWithRedirect>(
     (options) => {
@@ -39,16 +42,20 @@ export function useAuth(): AuthHook {
         throw new Error('Audience and client id are required');
       }
 
+      const getAuthorizePageUrl = getAuthorizePageUrlFactory({ urlBase });
+
       onAuthSuccessRef.current = options?.onSuccess;
       authWindowRef.current = window.open(getAuthorizePageUrl({ audience, clientId }));
     },
-    [clientId, audience],
+    [audience, clientId, urlBase],
   );
 
   const logout = useCallback(() => {
-    clearTokenCookie();
+    const cookieService = cookieServiceFactory({ cookieName });
+
+    cookieService.clearTokenCookie();
     setUser(null);
-  }, [setUser]);
+  }, [cookieName, setUser]);
 
   return {
     authorizeWithRedirect,

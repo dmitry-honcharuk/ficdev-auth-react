@@ -1,21 +1,25 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './context';
+import { cookieServiceFactory } from './services/cookie';
 import { User } from './User';
-import { clearTokenCookie, getTokenCookie } from './utils/cookies';
-import { getAuthorizeApiUrl } from './utils/url';
+import { getAuthorizeApiUrlFactory } from './utils/url';
 
 interface Props {
   clientId: string;
   audience: string;
+  urlBase: string;
+  cookieName: string;
 }
 
-export const AuthProvider: FC<Props> = ({ clientId, audience, children }) => {
+export const AuthProvider: FC<Props> = ({ clientId, audience, children, urlBase, cookieName }) => {
+  const cookieService = useMemo(() => cookieServiceFactory({ cookieName }), [cookieName]);
+
   const [state, setState] = useState<{
     user: User | null;
     fulfilled: boolean;
   }>({
     user: null,
-    fulfilled: typeof window !== 'undefined' ? !getTokenCookie() : false,
+    fulfilled: typeof window !== 'undefined' ? !cookieService.getTokenCookie() : false,
   });
 
   const setUser = useCallback((user: User | null) => {
@@ -23,9 +27,11 @@ export const AuthProvider: FC<Props> = ({ clientId, audience, children }) => {
   }, []);
 
   useEffect(() => {
-    const token = getTokenCookie();
+    const token = cookieService.getTokenCookie();
 
     if (!state.user && token) {
+      const getAuthorizeApiUrl = getAuthorizeApiUrlFactory({ urlBase });
+
       const headers = new Headers();
 
       headers.append('authorization', `Bearer ${token}`);
@@ -40,11 +46,11 @@ export const AuthProvider: FC<Props> = ({ clientId, audience, children }) => {
         })
         .then((user) => setState({ user, fulfilled: true }))
         .catch(() => {
-          clearTokenCookie();
+          cookieService.clearTokenCookie();
           setState((s) => ({ ...s, fulfilled: true }));
         });
     }
-  }, [clientId, state]);
+  }, [clientId, cookieService, state, urlBase]);
 
   return (
     <AuthContext.Provider
@@ -54,6 +60,8 @@ export const AuthProvider: FC<Props> = ({ clientId, audience, children }) => {
         user: state.user,
         isFulfilled: state.fulfilled,
         setUser,
+        urlBase,
+        cookieName,
       }}
     >
       {children}
