@@ -8,10 +8,16 @@ interface Props {
   clientId: string;
   audience: string;
   urlBase: string;
-  cookieName: string;
+  cookieName?: string;
 }
 
-export const AuthProvider: FC<Props> = ({ clientId, audience, children, urlBase, cookieName }) => {
+export const AuthProvider: FC<Props> = ({
+  clientId,
+  audience,
+  children,
+  urlBase,
+  cookieName = 'ficdev-auth-token',
+}) => {
   const cookieService = useMemo(() => cookieServiceFactory({ cookieName }), [cookieName]);
 
   const [state, setState] = useState<{
