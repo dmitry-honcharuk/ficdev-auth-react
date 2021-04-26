@@ -77,6 +77,6 @@ type AuthHook = {
 type AuthMessage = MessageEvent<{
   ficdev_auth?: {
     auth_token: string;
-    user: { id: string };
+    user: User;
   };
 }>;
