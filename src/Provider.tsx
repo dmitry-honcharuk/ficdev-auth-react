@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './context';
-import { cookieServiceFactory } from './services/cookie';
+import { localStorageServiceFactory } from './services/local-storage';
 import { User } from './User';
 import { getAuthorizeApiUrlFactory } from './utils/url';
 
@@ -8,7 +8,7 @@ interface Props {
   clientId: string;
   audience: string;
   urlBase: string;
-  cookieName?: string;
+  storageKeyName?: string;
 }
 
 export const AuthProvider: FC<Props> = ({
@@ -16,16 +16,16 @@ export const AuthProvider: FC<Props> = ({
   audience,
   children,
   urlBase,
-  cookieName = 'ficdev-auth-token',
+  storageKeyName: keyName = 'ficdev-auth-token',
 }) => {
-  const cookieService = useMemo(() => cookieServiceFactory({ cookieName }), [cookieName]);
+  const tokenPersistenceService = useMemo(() => localStorageServiceFactory({ keyName }), [keyName]);
 
   const [state, setState] = useState<{
     user: User | null;
     fulfilled: boolean;
   }>({
     user: null,
-    fulfilled: typeof window !== 'undefined' ? !cookieService.getTokenCookie() : false,
+    fulfilled: typeof window !== 'undefined' ? !tokenPersistenceService.getToken() : false,
   });
 
   const setUser = useCallback((user: User | null) => {
@@ -33,7 +33,7 @@ export const AuthProvider: FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    const token = cookieService.getTokenCookie();
+    const token = tokenPersistenceService.getToken();
 
     if (!state.user && token) {
       const getAuthorizeApiUrl = getAuthorizeApiUrlFactory({ urlBase });
@@ -52,11 +52,11 @@ export const AuthProvider: FC<Props> = ({
         })
         .then((user) => setState({ user, fulfilled: true }))
         .catch(() => {
-          cookieService.clearTokenCookie();
+          tokenPersistenceService.clearToken();
           setState((s) => ({ ...s, fulfilled: true }));
         });
     }
-  }, [clientId, cookieService, state, urlBase]);
+  }, [clientId, tokenPersistenceService, state, urlBase]);
 
   return (
     <AuthContext.Provider
@@ -67,7 +67,7 @@ export const AuthProvider: FC<Props> = ({
         isFulfilled: state.fulfilled,
         setUser,
         urlBase,
-        cookieName,
+        tokenPersistenceService,
       }}
     >
       {children}

@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { TokenPersistenceService } from './services/TokenPersistenceService';
 import { User } from './User';
 
 interface Context {
@@ -8,7 +9,7 @@ interface Context {
   isFulfilled: boolean;
   setUser: (user: User | null) => void;
   urlBase: string;
-  cookieName: string;
+  tokenPersistenceService: TokenPersistenceService | null;
 }
 
 export const AuthContext = createContext<Context>({
@@ -19,5 +20,5 @@ export const AuthContext = createContext<Context>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setUser: () => {},
   urlBase: '',
-  cookieName: '',
+  tokenPersistenceService: null,
 });

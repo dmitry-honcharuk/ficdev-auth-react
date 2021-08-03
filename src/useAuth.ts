@@ -1,11 +1,10 @@
 import { useCallback, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from './context';
-import { cookieServiceFactory } from './services/cookie';
 import { User } from './User';
 import { getAuthorizePageUrlFactory } from './utils/url';
 
 export function useAuth(): AuthHook {
-  const { clientId, audience, user, setUser, isFulfilled, urlBase, cookieName } = useContext(AuthContext);
+  const { clientId, audience, user, setUser, isFulfilled, urlBase, tokenPersistenceService } = useContext(AuthContext);
 
   const authWindowRef = useRef<Window | null>(null);
   const onAuthSuccessRef = useRef<AuthorizeWithRedirect>();
@@ -17,10 +16,8 @@ export function useAuth(): AuthHook {
       if (message && authWindowRef.current) {
         const { auth_token, user } = message;
 
-        const cookieService = cookieServiceFactory({ cookieName });
-
         setUser(user);
-        cookieService.setTokenCookie(auth_token);
+        tokenPersistenceService?.setToken(auth_token);
         authWindowRef.current.close();
 
         if (onAuthSuccessRef.current) {
@@ -34,7 +31,7 @@ export function useAuth(): AuthHook {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [cookieName, setUser]);
+  }, [tokenPersistenceService, setUser]);
 
   const authorizeWithRedirect = useCallback<AuthorizeWithRedirect>(
     (options) => {
@@ -51,11 +48,9 @@ export function useAuth(): AuthHook {
   );
 
   const logout = useCallback(() => {
-    const cookieService = cookieServiceFactory({ cookieName });
-
-    cookieService.clearTokenCookie();
+    tokenPersistenceService?.clearToken();
     setUser(null);
-  }, [cookieName, setUser]);
+  }, [tokenPersistenceService, setUser]);
 
   return {
     authorizeWithRedirect,
