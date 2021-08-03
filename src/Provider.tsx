@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './context';
-import { localStorageServiceFactory } from './services/local-storage';
 import { User } from './User';
 import { getAuthorizeApiUrlFactory } from './utils/url';
+import { tokenPersistenceServiceFactory } from './services/token-persistence.service';
 
 interface Props {
   clientId: string;
@@ -18,7 +18,7 @@ export const AuthProvider: FC<Props> = ({
   urlBase,
   storageKeyName: keyName = 'ficdev-auth-token',
 }) => {
-  const tokenPersistenceService = useMemo(() => localStorageServiceFactory({ keyName }), [keyName]);
+  const tokenPersistenceService = useMemo(() => tokenPersistenceServiceFactory({ keyName }), [keyName]);
 
   const [state, setState] = useState<{
     user: User | null;

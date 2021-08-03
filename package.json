@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/dmitry-honcharuk/ficdev-auth-react#readme",
   "devDependencies": {
+    "@types/js-cookie": "^2.2.7",
     "@types/react": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
@@ -36,6 +37,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
+    "js-cookie": "^3.0.0",
     "query-string": "^7.0.0"
   },
   "peerDependencies": {
