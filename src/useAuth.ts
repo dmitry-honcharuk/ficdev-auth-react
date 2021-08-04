@@ -4,7 +4,8 @@ import { User } from './User';
 import { getAuthorizePageUrlFactory } from './utils/url';
 
 export function useAuth(): AuthHook {
-  const { clientId, audience, user, setUser, isFulfilled, urlBase, tokenPersistenceService } = useContext(AuthContext);
+  const { clientId, audience, user, setUser, isFulfilled, urlBase, tokenPersistenceService, tokenHeaderName } =
+    useContext(AuthContext);
 
   const authWindowRef = useRef<Window | null>(null);
   const onAuthSuccessRef = useRef<AuthorizeWithRedirect>();
@@ -52,11 +53,19 @@ export function useAuth(): AuthHook {
     setUser(null);
   }, [tokenPersistenceService, setUser]);
 
+  const headers = new Headers();
+  const token = tokenPersistenceService?.getToken();
+
+  if (token) {
+    headers.set(tokenHeaderName, token);
+  }
+
   return {
     authorizeWithRedirect,
     user,
     isFulfilled,
     logout,
+    authTokenHeaders: headers,
   };
 }
 
@@ -67,6 +76,7 @@ type AuthHook = {
   logout: () => void;
   user: User | null;
   isFulfilled: boolean;
+  authTokenHeaders: Headers;
 };
 
 type AuthMessage = MessageEvent<{

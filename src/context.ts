@@ -10,6 +10,7 @@ interface Context {
   setUser: (user: User | null) => void;
   urlBase: string;
   tokenPersistenceService: TokenPersistenceService | null;
+  tokenHeaderName: string;
 }
 
 export const AuthContext = createContext<Context>({
@@ -21,4 +22,5 @@ export const AuthContext = createContext<Context>({
   setUser: () => {},
   urlBase: '',
   tokenPersistenceService: null,
+  tokenHeaderName: '',
 });

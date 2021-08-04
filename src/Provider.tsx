@@ -1,14 +1,15 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthContext } from './context';
+import { tokenPersistenceServiceFactory } from './services/token-persistence.service';
 import { User } from './User';
 import { getAuthorizeApiUrlFactory } from './utils/url';
-import { tokenPersistenceServiceFactory } from './services/token-persistence.service';
 
 interface Props {
   clientId: string;
   audience: string;
   urlBase: string;
   storageKeyName?: string;
+  tokenHeaderName?: string;
 }
 
 export const AuthProvider: FC<Props> = ({
@@ -17,6 +18,7 @@ export const AuthProvider: FC<Props> = ({
   children,
   urlBase,
   storageKeyName: keyName = 'ficdev-auth-token',
+  tokenHeaderName = 'x-ficdev-auth-token',
 }) => {
   const tokenPersistenceService = useMemo(() => tokenPersistenceServiceFactory({ keyName }), [keyName]);
 
@@ -68,6 +70,7 @@ export const AuthProvider: FC<Props> = ({
         setUser,
         urlBase,
         tokenPersistenceService,
+        tokenHeaderName,
       }}
     >
       {children}
