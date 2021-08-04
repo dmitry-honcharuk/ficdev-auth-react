@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from './context';
 import { User } from './User';
 import { getAuthorizePageUrlFactory } from './utils/url';
@@ -19,6 +19,15 @@ export function useAuth(): AuthHook {
 
   const authWindowRef = useRef<Window | null>(null);
   const onAuthSuccessRef = useRef<AuthorizeWithRedirect>();
+  const [headers, setHeaders] = useState(new Headers(token ? [[tokenHeaderName, token]] : []));
+
+  useEffect(() => {
+    const headerToken = headers.get(tokenHeaderName);
+
+    if (headerToken !== token) {
+      setHeaders(new Headers(token ? [[tokenHeaderName, token]] : []));
+    }
+  }, [headers, token, tokenHeaderName]);
 
   useEffect(() => {
     function handleMessage({ data }: AuthMessage) {
@@ -63,12 +72,6 @@ export function useAuth(): AuthHook {
     tokenPersistenceService?.clearToken();
     setUser(null);
   }, [tokenPersistenceService, setUser]);
-
-  const headers = new Headers();
-
-  if (token) {
-    headers.set(tokenHeaderName, token);
-  }
 
   return {
     authorizeWithRedirect,
