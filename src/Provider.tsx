@@ -25,13 +25,19 @@ export const AuthProvider: FC<Props> = ({
   const [state, setState] = useState<{
     user: User | null;
     fulfilled: boolean;
+    token: string | null;
   }>({
     user: null,
     fulfilled: typeof window !== 'undefined' ? !tokenPersistenceService.getToken() : false,
+    token: null,
   });
 
   const setUser = useCallback((user: User | null) => {
     setState((s) => ({ ...s, user }));
+  }, []);
+
+  const setToken = useCallback((token: string) => {
+    setState((s) => ({ ...s, token }));
   }, []);
 
   useEffect(() => {
@@ -52,7 +58,7 @@ export const AuthProvider: FC<Props> = ({
 
           throw new Error();
         })
-        .then((user) => setState({ user, fulfilled: true }))
+        .then((user) => setState({ user, fulfilled: true, token }))
         .catch(() => {
           tokenPersistenceService.clearToken();
           setState((s) => ({ ...s, fulfilled: true }));
@@ -68,9 +74,11 @@ export const AuthProvider: FC<Props> = ({
         user: state.user,
         isFulfilled: state.fulfilled,
         setUser,
+        setToken,
         urlBase,
         tokenPersistenceService,
         tokenHeaderName,
+        token: state.token,
       }}
     >
       {children}

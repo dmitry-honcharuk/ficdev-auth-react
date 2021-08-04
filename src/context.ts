@@ -8,9 +8,11 @@ interface Context {
   user: User | null;
   isFulfilled: boolean;
   setUser: (user: User | null) => void;
+  setToken: (token: string) => void;
   urlBase: string;
   tokenPersistenceService: TokenPersistenceService | null;
   tokenHeaderName: string;
+  token: string | null;
 }
 
 export const AuthContext = createContext<Context>({
@@ -18,9 +20,10 @@ export const AuthContext = createContext<Context>({
   audience: null,
   user: null,
   isFulfilled: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setUser: () => {},
+  setToken: () => {},
   urlBase: '',
   tokenPersistenceService: null,
   tokenHeaderName: '',
+  token: null,
 });
